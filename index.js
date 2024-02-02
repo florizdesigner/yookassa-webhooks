@@ -1,15 +1,16 @@
 const express = require('express')
 const axios = require('axios')
 const xml = require('xml')
+require('dotenv').config()
 
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 
 const telegramSendMessage = async (text, chat_id) => {
     const options = {
         method: 'POST',
-        url: `https://api.telegram.org/bot6751744282:AAHAg-z-Bud7c5U--KUv8UJtr5QSWBEvjkc/sendMessage`,
+        url: `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/sendMessage`,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         data: {
             "chat_id": chat_id,
@@ -68,7 +69,7 @@ app.post('/webhook', async (req, res) => {
         }
 
     } else if (req.headers['content-type'] === 'application/json') {
-        if (req.body.object.metadata.chat_id) await telegramSendMessage(req.body, req.body.object.metadata.chat_id)
+        if (typeof req.body.object == 'object' && typeof req.body.object.metadata == 'object' && req.body.object.metadata.chat_id) await telegramSendMessage(req.body, req.body.object.metadata.chat_id)
         res.sendStatus(200)
     } else {
         console.log(req)
