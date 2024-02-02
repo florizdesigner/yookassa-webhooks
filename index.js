@@ -76,4 +76,4 @@ app.post('/webhook', async (req, res) => {
     }
 })
 
-app.listen(3001, () => console.log('OK, server started'))
+app.listen(process.env.PORT || 3001, () => console.log('OK, server started'))
