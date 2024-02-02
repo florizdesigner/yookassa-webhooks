@@ -29,6 +29,9 @@ const telegramSendMessage = async (text, chat_id) => {
     }
 }
 
+app.get('*', (req, res) => {
+    res.send('<html><h1>404 Not Found</h1></html>')
+})
 
 app.post('/webhook', async (req, res) => {
     if (req.headers['content-type'] === 'application/x-www-form-urlencoded; charset=UTF-8') {
