@@ -30,8 +30,30 @@ const telegramSendMessage = async (text, chat_id) => {
     }
 }
 
-app.get('*', (req, res) => {
-    res.send('<html><h1>404 Not Found</h1></html>')
+app.all('/webhook/rbs/:id', async(req, res) => {
+        let body = {}
+        for (value in req.query) {
+            body[value] = req.query[value]
+        }
+
+        if (Object.keys(body).length && !isNaN(Number(req.params.id))) {
+            telegramSendMessage(body, Number(req.params.id))
+        }
+
+        res.sendStatus(200)
+})
+
+app.all('/webhook/rbs', async (req, res) => {
+    let body = {}
+    for (value in req.query) {
+        body[value] = req.query[value]
+    }
+
+    if (body.telegram_id !== undefined) {
+        telegramSendMessage(body, body.telegram_id)
+    }
+
+    res.sendStatus(200)
 })
 
 app.post('/webhook', async (req, res) => {
@@ -75,6 +97,11 @@ app.post('/webhook', async (req, res) => {
         console.log(req)
         res.sendStatus(200)
     }
+})
+
+
+app.get('*', (req, res) => {
+    res.send('<html><h1>404 Not Found</h1></html>')
 })
 
 app.listen(process.env.PORT || 3001, () => console.log('OK, server started'))
